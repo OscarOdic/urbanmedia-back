@@ -1,0 +1,9 @@
+mariadb:
+    image: mariadb
+    volumes:
+        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+        MYSQL_DATABASE: urbanmedia
+        MYSQL_ROOT_PASSWORD: root
+    ports:
+        - "3306"
