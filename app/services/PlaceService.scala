@@ -14,11 +14,13 @@ object PlaceService {
       case Some(place) => for {
         commentsPlace <- db.run(comments.filter(_.placeId === place.id).result)
         warningsPlace <- db.run(warnings.filter(_.placeId === place.id).result)
+        image <- db.run(images.filter(_.placeId === place.id).exists.result)
       } yield Some(DetailsPlace(
         place.id,
         place.name,
         commentsPlace.toList,
-        warningsPlace.toList
+        warningsPlace.toList,
+        if (image) Some(s"place/image?id=${place.id}") else None
       ))
       case None => Future(None)
     })

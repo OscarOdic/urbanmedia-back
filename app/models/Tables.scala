@@ -12,6 +12,15 @@ object Tables extends App {
   }
   def geoLocPlaces = TableQuery[GeoLocPlaces]
 
+  class Image(tag: Tag) extends Table[(Int, Int, Array[Byte])](tag, "image") {
+    def id = column[Int]("id", O.PrimaryKey)
+    def placeId = column[Int]("placeid")
+    def image = column[Array[Byte]]("image")
+    def * = (id, placeId, image)
+    def place = foreignKey("imageplace_fk", placeId, geoLocPlaces)(_.id)
+  }
+  def images = TableQuery[Image]
+
   class Reactions(table: String)(tag: Tag) extends Table[Reaction](tag, table) {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def placeId = column[Int]("placeid")

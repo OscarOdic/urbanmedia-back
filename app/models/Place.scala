@@ -13,5 +13,6 @@ case class DetailsPlace(
                          id: Int,
                          name: String,
                          comments: List[Reaction] = List.empty,
-                         warnings: List[Reaction] = List.empty
+                         warnings: List[Reaction] = List.empty,
+                         image: Option[String] = None
                        ) extends Place(id, name)
