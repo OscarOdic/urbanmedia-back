@@ -1,24 +1,17 @@
 package models
 
-import slick.jdbc.PostgresProfile.api._
+class Place(id: Int, name: String)
 
-trait Place
+case class GeoLocPlace(
+                        id: Int,
+                        name: String,
+                        latitude: Double,
+                        longitude: Double
+                      ) extends Place(id, name)
 
-object Tables extends App {
-  case class GeoLocPlace(
-                          id: Int,
-                          name: String,
-                          latitude: Double,
-                          longitude: Double
-                        )
-
-  class GeoLocPlaces(tag: Tag) extends Table[GeoLocPlace](tag, "geolocplace") {
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def name = column[String]("name")
-    def latitude = column[Double]("latitude")
-    def longitude = column[Double]("longitude")
-    def * = (id, name, latitude, longitude) <> (GeoLocPlace.tupled, GeoLocPlace.unapply)
-  }
-
-  def geoLocPlaces = TableQuery[GeoLocPlaces]
-}
+case class DetailsPlace(
+                         id: Int,
+                         name: String,
+                         comments: List[Reaction] = List.empty,
+                         warnings: List[Reaction] = List.empty
+                       ) extends Place(id, name)

@@ -1,6 +1,7 @@
 package utils
 
 import slick.jdbc.PostgresProfile.api._
+import slick.jdbc.PostgresProfile.backend.DatabaseDef
 
 object SlickDatabase {
   val USERNAME = "postgres"
@@ -9,5 +10,5 @@ object SlickDatabase {
   val URL = s"jdbc:postgresql://localhost/$DATABASE?user=$USERNAME&password=$PASSWORD"
   val DRIVER = "org.postgresql.Driver"
 
-  def get = Database.forURL(URL, driver = DRIVER)
+  def get: DatabaseDef = Database.forURL(URL, driver = DRIVER)
 }

@@ -1,6 +1,6 @@
 package utils
 
-import models.Tables.GeoLocPlace
+import models.GeoLocPlace
 import play.api.libs.json.{Format, Json}
 
 object JsonFormatters {
