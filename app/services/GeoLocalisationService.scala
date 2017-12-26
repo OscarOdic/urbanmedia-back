@@ -7,7 +7,7 @@ import models.Tables.geoLocPlaces
 
 import scala.concurrent.Future
 
-object GeoLocalisation {
+object GeoLocalisationService {
   def getGeoLocPlaces(northEast: (Double, Double), southWest: (Double, Double))(implicit db: DatabaseDef): Future[Seq[GeoLocPlace]] =
     db.run(geoLocPlaces.filter(gp =>
       gp.latitude < northEast._1 &&

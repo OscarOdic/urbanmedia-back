@@ -10,6 +10,20 @@ object Tables extends App {
     def longitude = column[Double]("longitude")
     def * = (id, name, latitude, longitude) <> (GeoLocPlace.tupled, GeoLocPlace.unapply)
   }
-
   def geoLocPlaces = TableQuery[GeoLocPlaces]
+
+  class Reactions(table: String)(tag: Tag) extends Table[Reaction](tag, table) {
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def placeId = column[Int]("placeid")
+    def user = column[String]("username")
+    def message = column[String]("message")
+    def * = (user, message) <> (Reaction.tupled, Reaction.unapply)
+    def place = foreignKey(s"${table}place_fk", placeId, geoLocPlaces)(_.id)
+  }
+
+  class Comments(tag: Tag) extends Reactions("comment")(tag)
+  def comments = TableQuery[Comments]
+
+  class Warnings(tag: Tag) extends Reactions("warning")(tag)
+  def warnings = TableQuery[Warnings]
 }

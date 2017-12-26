@@ -5,7 +5,7 @@ import javax.inject._
 import play.api.mvc._
 import play.api.libs.json.Json
 import play.api.libs.json._
-import services.GeoLocalisation._
+import services.GeoLocalisationService._
 import utils.SlickDatabase
 
 import scala.concurrent.ExecutionContext.Implicits.global

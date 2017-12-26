@@ -3,5 +3,5 @@
 # ~~~~
 
 GET     /                           controllers.HomeController.index
-
 GET     /geoloc                     controllers.GeoLocController.index(northeast: String, southwest: String)
+GET     /place                      controllers.PlaceController.index(id: Int)
