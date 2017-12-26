@@ -1,5 +1,6 @@
 package controllers
 
+import java.nio.file.Files
 import javax.inject._
 
 import models.GeoLocPlace
@@ -46,6 +47,14 @@ class PlaceController @Inject() extends Controller {
         request.body("longitude").head.toDouble
       )
     )
+    db.run(insert).map(_ => Ok("added"))
+  }
+
+  def uploadImage(id: Int) = Action.async(parse.temporaryFile) { request =>
+    val db = SlickDatabase.get
+    val insert = DBIO.seq(
+      images.map(c => (c.placeId, c.image)) += (id, Files.readAllBytes(request.body.file.toPath))
+    ).transactionally
     db.run(insert).map(_ => Ok("added"))
   }
 }

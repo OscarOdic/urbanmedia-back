@@ -7,3 +7,4 @@ GET     /geoloc                     controllers.GeoLocController.index(northeast
 GET     /place                      controllers.PlaceController.index(id: Int)
 GET     /place/image                controllers.PlaceController.randomBackgroundImage(id: Int)
 POST    /place/add                  controllers.PlaceController.add
+POST    /place/image/upload         controllers.PlaceController.uploadImage(id: Int)
