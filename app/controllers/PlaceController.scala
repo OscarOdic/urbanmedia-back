@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject._
 
+import models.GeoLocPlace
 import play.api.mvc._
 import play.api.libs.json.Json
 import play.api.libs.json._
@@ -33,5 +34,18 @@ class PlaceController @Inject() extends Controller {
       case Some(image) => Ok(image).as("image/png")
       case None => NotFound(s"Place with id $id not found")
     })
+  }
+
+  def add = Action.async(parse.urlFormEncoded) { request =>
+    val db = SlickDatabase.get
+    val insert = DBIO.seq(
+      geoLocPlaces += GeoLocPlace(
+        None,
+        request.body("name").head,
+        request.body("latitude").head.toDouble,
+        request.body("longitude").head.toDouble
+      )
+    )
+    db.run(insert).map(_ => Ok("added"))
   }
 }

@@ -8,7 +8,7 @@ object Tables extends App {
     def name = column[String]("name")
     def latitude = column[Double]("latitude")
     def longitude = column[Double]("longitude")
-    def * = (id, name, latitude, longitude) <> (GeoLocPlace.tupled, GeoLocPlace.unapply)
+    def * = (id.?, name, latitude, longitude) <> (GeoLocPlace.tupled, GeoLocPlace.unapply)
   }
   def geoLocPlaces = TableQuery[GeoLocPlaces]
 
