@@ -12,21 +12,29 @@ object Tables extends App {
   }
   def geoLocPlaces = TableQuery[GeoLocPlaces]
 
-  class Image(tag: Tag) extends Table[(Option[Int], Int, Array[Byte])](tag, "image") {
+  class Medias(table: String)(tag: Tag) extends Table[(Option[Int], Int, Array[Byte])](tag, table) {
     def id = column[Int]("id", O.PrimaryKey)
     def placeId = column[Int]("placeid")
-    def image = column[Array[Byte]]("image")
-    def * = (id.?, placeId, image)
-    def place = foreignKey("imageplace_fk", placeId, geoLocPlaces)(_.id)
+    def media = column[Array[Byte]](table)
+    def * = (id.?, placeId, media)
+    def place = foreignKey(s"${table}place_fk", placeId, geoLocPlaces)(_.id)
   }
-  def images = TableQuery[Image]
+
+  class Images(tag: Tag) extends Medias("image")(tag)
+  def images = TableQuery[Images]
+
+  class Songs(tag: Tag) extends Medias("song")(tag)
+  def songs = TableQuery[Songs]
+
+  class Videos(tag: Tag) extends Medias("video")(tag)
+  def videos = TableQuery[Videos]
 
   class Reactions(table: String)(tag: Tag) extends Table[Reaction](tag, table) {
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def placeId = column[Int]("placeid")
     def user = column[String]("username")
     def message = column[String]("message")
-    def * = (user, message) <> (Reaction.tupled, Reaction.unapply)
+    def * = (id.?, placeId.?, user, message) <> (Reaction.tupled, Reaction.unapply)
     def place = foreignKey(s"${table}place_fk", placeId, geoLocPlaces)(_.id)
   }
 
