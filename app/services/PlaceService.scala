@@ -18,6 +18,7 @@ object PlaceService {
       } yield Some(DetailsPlace(
         place.id,
         place.name,
+        place.whoAdded,
         commentsPlace.map(_.copy(None, None)).toList,
         warningsPlace.map(_.copy(None, None)).toList,
         if (image) Some(s"place/image?id=$id") else None

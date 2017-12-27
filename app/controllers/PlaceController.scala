@@ -7,7 +7,7 @@ import play.api.mvc._
 import play.api.libs.json.Json
 import utils.SlickDatabase
 import models.Tables._
-import services.{PlaceService, UploadService}
+import services.{AuthService, PlaceService, UploadService}
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,32 +35,41 @@ class PlaceController @Inject() extends Controller {
 
   def add = Action.async(parse.urlFormEncoded) { request =>
     val db = SlickDatabase.get
-    val insert = DBIO.seq(
-      geoLocPlaces += GeoLocPlace(
-        None,
-        request.body("name").head,
-        request.body("latitude").head.toDouble,
-        request.body("longitude").head.toDouble
+    new AuthService(db).withAuth(request.headers) { account =>
+      val insert = DBIO.seq(
+        geoLocPlaces += GeoLocPlace(
+          None,
+          request.body("name").head,
+          request.body("latitude").head.toDouble,
+          request.body("longitude").head.toDouble,
+          account.userName
+        )
       )
-    )
-    db.run(insert).map(_ => Ok("added"))
+      db.run(insert).map(_ => Ok("added"))
+    }
   }
 
   def uploadImage(id: Int) = Action.async(parse.temporaryFile) { request =>
     val db = SlickDatabase.get
-    val insert = UploadService.uploadFile(images, id, request.body)(db)
-    db.run(insert).map(_ => Ok("added"))
+    new AuthService(db).withAuth(request.headers) { account =>
+      val insert = UploadService.uploadFile(images, id, request.body, account.userName)(db)
+      db.run(insert).map(_ => Ok("added"))
+    }
   }
 
   def uploadSong(id: Int) = Action.async(parse.temporaryFile) { request =>
     val db = SlickDatabase.get
-    val insert = UploadService.uploadFile(songs, id, request.body)(db)
-    db.run(insert).map(_ => Ok("added"))
+    new AuthService(db).withAuth(request.headers) { account =>
+      val insert = UploadService.uploadFile(songs, id, request.body, account.userName)(db)
+      db.run(insert).map(_ => Ok("added"))
+    }
   }
 
   def uploadVideo(id: Int) = Action.async(parse.temporaryFile) { request =>
     val db = SlickDatabase.get
-    val insert = UploadService.uploadFile(videos, id, request.body)(db)
-    db.run(insert).map(_ => Ok("added"))
+    new AuthService(db).withAuth(request.headers) { account =>
+      val insert = UploadService.uploadFile(videos, id, request.body, account.userName)(db)
+      db.run(insert).map(_ => Ok("added"))
+    }
   }
 }
