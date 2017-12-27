@@ -3,8 +3,13 @@
 # ~~~~
 
 GET     /                           controllers.HomeController.index
+GET     /user                       controllers.UserController.index(username: String)
+POST    /user/new                   controllers.UserController.create
+POST    /user/login                 controllers.UserController.check
 GET     /geoloc                     controllers.GeoLocController.index(northeast: String, southwest: String)
 GET     /place                      controllers.PlaceController.index(id: Int)
 GET     /place/image                controllers.PlaceController.randomBackgroundImage(id: Int)
 POST    /place/add                  controllers.PlaceController.add
 POST    /place/image/upload         controllers.PlaceController.uploadImage(id: Int)
+POST    /place/song/upload         controllers.PlaceController.uploadSong(id: Int)
+POST    /place/video/upload         controllers.PlaceController.uploadVideo(id: Int)

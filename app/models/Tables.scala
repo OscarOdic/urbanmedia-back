@@ -8,15 +8,17 @@ object Tables extends App {
     def name = column[String]("name")
     def latitude = column[Double]("latitude")
     def longitude = column[Double]("longitude")
-    def * = (id.?, name, latitude, longitude) <> (GeoLocPlace.tupled, GeoLocPlace.unapply)
+    def whoAdded = column[String]("whoadded")
+    def * = (id.?, name, latitude, longitude, whoAdded) <> (GeoLocPlace.tupled, GeoLocPlace.unapply)
   }
   def geoLocPlaces = TableQuery[GeoLocPlaces]
 
-  class Medias(table: String)(tag: Tag) extends Table[(Option[Int], Int, Array[Byte])](tag, table) {
+  class Medias(table: String)(tag: Tag) extends Table[(Option[Int], Int, Array[Byte], String)](tag, table) {
     def id = column[Int]("id", O.PrimaryKey)
     def placeId = column[Int]("placeid")
-    def media = column[Array[Byte]](table)
-    def * = (id.?, placeId, media)
+    def media = column[Array[Byte]]("media")
+    def author = column[String]("author")
+    def * = (id.?, placeId, media, author)
     def place = foreignKey(s"${table}place_fk", placeId, geoLocPlaces)(_.id)
   }
 
@@ -43,4 +45,21 @@ object Tables extends App {
 
   class Warnings(tag: Tag) extends Reactions("warning")(tag)
   def warnings = TableQuery[Warnings]
+
+  class Accounts(tag: Tag) extends Table[Account](tag, "account") {
+    def userName = column[String]("username", O.PrimaryKey)
+    def password = column[String]("password")
+    def bio = column[String]("bio")
+    def * = (userName, password, bio.?) <> (Account.tupled, Account.unapply)
+  }
+  def accounts = TableQuery[Accounts]
+
+  class Follow(tag: Tag) extends Table[(String, Int)](tag, "follow") {
+    def userName = column[String]("username")
+    def placeId = column[Int]("placeid")
+    def * = (userName, placeId)
+    def account = foreignKey(s"followaccount_fk", userName, accounts)(_.userName)
+    def place = foreignKey(s"followplace_fk", placeId, geoLocPlaces)(_.id)
+  }
+  def follow = TableQuery[Follow]
 }

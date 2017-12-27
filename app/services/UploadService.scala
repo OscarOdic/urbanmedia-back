@@ -8,8 +8,8 @@ import slick.jdbc.PostgresProfile.api._
 import slick.jdbc.PostgresProfile.backend.DatabaseDef
 
 object UploadService {
-  def uploadFile[T <: Medias](table : TableQuery[T], id: Int, body: TemporaryFile)(db: DatabaseDef) =
+  def uploadFile[T <: Medias](table : TableQuery[T], id: Int, body: TemporaryFile, author: String)(db: DatabaseDef) =
     DBIO.seq(
-      table.map(t => (t.placeId, t.media)) += (id, Files.readAllBytes(body.file.toPath))
+      table.map(t => (t.placeId, t.media, t.author)) += (id, Files.readAllBytes(body.file.toPath), author)
     ).transactionally
 }
