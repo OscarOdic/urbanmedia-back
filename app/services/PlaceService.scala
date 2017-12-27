@@ -21,7 +21,7 @@ object PlaceService {
         place.whoAdded,
         commentsPlace.map(_.copy(None, None)).toList,
         warningsPlace.map(_.copy(None, None)).toList,
-        if (image) Some(s"place/image?id=$id") else None
+        if (image) Some(s"place/random?id=$id") else None
       ))
       case None => Future(None)
     })

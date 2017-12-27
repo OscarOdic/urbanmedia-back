@@ -15,21 +15,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class PlaceController @Inject() extends Controller {
 
-  def index(id: Int) = Action.async {
+  def index(placeid: Int) = Action.async {
     import utils.JsonFormatters._
     val db = SlickDatabase.get
-    PlaceService.getPlace(id)(db).map {
+    PlaceService.getPlace(placeid)(db).map {
       case Some(p) => Ok(Json.toJson(p))
-      case None => NotFound(s"Place with id $id not found")
+      case None => NotFound(s"Place with id $placeid not found")
     }
   }
 
-  def randomBackgroundImage(id: Int) = Action.async {
+  def randomBackgroundImage(placeid: Int) = Action.async {
     val db = SlickDatabase.get
     val rand = SimpleFunction.nullary[Double]("random")
-    db.run(images.filter(_.placeId === id).sortBy(_ => rand).take(1).map(_.media).result.transactionally).map(_.headOption match {
-      case Some(image) => Ok(image).as("image/png")
-      case None => NotFound(s"Place with id $id not found")
+    db.run(images.filter(_.placeId === placeid).sortBy(_ => rand).take(1).map(_.media).result.transactionally).map(_.headOption match {
+      case Some(image) => Ok(image).as("image")
+      case None => NotFound(s"Place with id $placeid not found")
     })
   }
 
@@ -49,26 +49,50 @@ class PlaceController @Inject() extends Controller {
     }
   }
 
-  def uploadImage(id: Int) = Action.async(parse.temporaryFile) { request =>
+  def getImage(placeid: Int, imageid: Int) = Action.async {
+    val db = SlickDatabase.get
+    db.run(images.filter(i => i.placeId === placeid && i.id === imageid).map(_.media).result.transactionally).map(_.headOption match {
+      case Some(image) => Ok(image).as("image")
+      case None => NotFound(s"Place with id $placeid or image with id $imageid not found")
+    })
+  }
+
+  def getSong(placeid: Int, songid: Int) = Action.async {
+    val db = SlickDatabase.get
+    db.run(songs.filter(i => i.placeId === placeid && i.id === songid).map(_.media).result.transactionally).map(_.headOption match {
+      case Some(song) => Ok(song).as("audio")
+      case None => NotFound(s"Place with id $placeid or song with id $songid not found")
+    })
+  }
+
+  def getVideo(placeid: Int, videoid: Int) = Action.async {
+    val db = SlickDatabase.get
+    db.run(videos.filter(i => i.placeId === placeid && i.id === videoid).map(_.media).result.transactionally).map(_.headOption match {
+      case Some(video) => Ok(video).as("video/mp4")
+      case None => NotFound(s"Place with id $placeid or video with id $videoid not found")
+    })
+  }
+
+  def uploadImage(placeid: Int) = Action.async(parse.temporaryFile) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
-      val insert = UploadService.uploadFile(images, id, request.body, account.userName)(db)
+      val insert = UploadService.uploadFile(images, placeid, request.body, account.userName)(db)
       db.run(insert).map(_ => Ok("added"))
     }
   }
 
-  def uploadSong(id: Int) = Action.async(parse.temporaryFile) { request =>
+  def uploadSong(placeid: Int) = Action.async(parse.temporaryFile) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
-      val insert = UploadService.uploadFile(songs, id, request.body, account.userName)(db)
+      val insert = UploadService.uploadFile(songs, placeid, request.body, account.userName)(db)
       db.run(insert).map(_ => Ok("added"))
     }
   }
 
-  def uploadVideo(id: Int) = Action.async(parse.temporaryFile) { request =>
+  def uploadVideo(placeid: Int) = Action.async(parse.temporaryFile) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
-      val insert = UploadService.uploadFile(videos, id, request.body, account.userName)(db)
+      val insert = UploadService.uploadFile(videos, placeid, request.body, account.userName)(db)
       db.run(insert).map(_ => Ok("added"))
     }
   }
