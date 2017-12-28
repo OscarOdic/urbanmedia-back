@@ -20,8 +20,8 @@ object PlaceService {
         place.id,
         place.name,
         place.whoAdded,
-        commentsPlace.map(_.copy(None, None)).toList,
-        warningsPlace.map(_.copy(None, None)).toList,
+        commentsPlace.map(_.copy(placeId = None)).toList,
+        warningsPlace.map(_.copy(placeId = None)).toList,
         if (image) Some(s"${ConfigFactory.load().getString("application.baseUrl")}place/random?placeid=$id") else None
       ))
       case None => Future(None)

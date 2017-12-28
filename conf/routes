@@ -28,4 +28,6 @@ POST    /place/song/upload          controllers.MediaController.uploadSong(place
 POST    /place/video/upload         controllers.MediaController.uploadVideo(placeid: Int)
 
 POST    /place/comment/add          controllers.ReactionController.addComment
+DELETE  /place/comment              controllers.ReactionController.deleteComment(commentid: Int)
 POST    /place/warning/add          controllers.ReactionController.addWarning
+DELETE  /place/warning              controllers.ReactionController.deleteWarning(warningid: Int)
