@@ -3,19 +3,26 @@
 # ~~~~
 
 GET     /                           controllers.HomeController.index
+
 GET     /user                       controllers.UserController.index(username: String)
 POST    /user/new                   controllers.UserController.create
 POST    /user/login                 controllers.UserController.check
+
 GET     /geoloc                     controllers.GeoLocController.index(northeast: String, southwest: String)
+
 GET     /place                      controllers.PlaceController.index(placeid: Int)
 GET     /place/random               controllers.PlaceController.randomBackgroundImage(placeid: Int)
 POST    /place/add                  controllers.PlaceController.add
-GET     /place/image                controllers.PlaceController.getImage(placeid: Int, imageid: Int)
-GET     /place/images               controllers.PlaceController.getImages(placeid: Int)
-GET     /place/song                 controllers.PlaceController.getSong(placeid: Int, songid: Int)
-GET     /place/songs                controllers.PlaceController.getSongs(placeid: Int)
-GET     /place/video                controllers.PlaceController.getVideo(placeid: Int, videoid: Int)
-GET     /place/videos               controllers.PlaceController.getVideos(placeid: Int)
-POST    /place/image/upload         controllers.PlaceController.uploadImage(placeid: Int)
-POST    /place/song/upload          controllers.PlaceController.uploadSong(placeid: Int)
-POST    /place/video/upload         controllers.PlaceController.uploadVideo(placeid: Int)
+
+GET     /place/image                controllers.MediaController.getImage(placeid: Int, imageid: Int)
+GET     /place/images               controllers.MediaController.getImages(placeid: Int)
+GET     /place/song                 controllers.MediaController.getSong(placeid: Int, songid: Int)
+GET     /place/songs                controllers.MediaController.getSongs(placeid: Int)
+GET     /place/video                controllers.MediaController.getVideo(placeid: Int, videoid: Int)
+GET     /place/videos               controllers.MediaController.getVideos(placeid: Int)
+POST    /place/image/upload         controllers.MediaController.uploadImage(placeid: Int)
+POST    /place/song/upload          controllers.MediaController.uploadSong(placeid: Int)
+POST    /place/video/upload         controllers.MediaController.uploadVideo(placeid: Int)
+
+POST    /place/comment/add          controllers.ReactionController.addComment
+POST    /place/warning/add          controllers.ReactionController.addWarning
