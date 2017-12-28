@@ -6,6 +6,7 @@ import play.api.mvc._
 import play.api.libs.json.Json
 import services.GeoLocalisationService._
 import utils.SlickDatabase
+import utils.JsonFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -13,7 +14,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class GeoLocController @Inject() extends Controller {
 
   def index(northeast: String, southwest: String) = Action.async {
-    import utils.JsonFormatters._
     val db = SlickDatabase.get
     val ne = northeast.split(",").toList.map(_.toDouble) match {
       case List(latitude, longitude) => (latitude, longitude)
