@@ -13,6 +13,8 @@ GET     /geoloc                     controllers.GeoLocController.index(northeast
 GET     /place                      controllers.PlaceController.index(placeid: Int)
 GET     /place/random               controllers.PlaceController.randomBackgroundImage(placeid: Int)
 POST    /place/add                  controllers.PlaceController.add
+POST    /place/follow               controllers.PlaceController.followPlace
+POST    /place/unfollow             controllers.PlaceController.unfollowPlace
 
 GET     /place/image                controllers.MediaController.getImage(placeid: Int, imageid: Int)
 DELETE  /place/image                controllers.MediaController.deleteImage(imageid: Int)
