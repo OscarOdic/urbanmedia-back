@@ -11,6 +11,7 @@ import slick.jdbc.PostgresProfile.api._
 import utils.JsonFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 @Singleton
 class MediaController @Inject() extends Controller {
@@ -74,6 +75,39 @@ class MediaController @Inject() extends Controller {
     new AuthService(db).withAuth(request.headers) { account =>
       val insert = UploadService.uploadFile(videos, placeid, request.body, account.userName)(db)
       db.run(insert).map(_ => Ok("added"))
+    }
+  }
+
+  def deleteImage(imageid: Int) = Action.async(parse.urlFormEncoded) { request =>
+    val db = SlickDatabase.get
+    new AuthService(db).withAuth(request.headers) { account =>
+      val query = images.filter(_.id === imageid)
+      db.run(query.map(_.author).result).flatMap(_.head match {
+        case author if author == account.userName => db.run(query.delete).map(_ => Ok("deleted"))
+        case _ => Future(Unauthorized(s"${account.userName} is unauthorized to delete this image"))
+      })
+    }
+  }
+
+  def deleteSong(songid: Int) = Action.async(parse.urlFormEncoded) { request =>
+    val db = SlickDatabase.get
+    new AuthService(db).withAuth(request.headers) { account =>
+      val query = songs.filter(_.id === songid)
+      db.run(query.map(_.author).result).flatMap(_.head match {
+        case author if author == account.userName => db.run(query.delete).map(_ => Ok("deleted"))
+        case _ => Future(Unauthorized(s"${account.userName} is unauthorized to delete this song"))
+      })
+    }
+  }
+
+  def deleteVideo(videoid: Int) = Action.async(parse.urlFormEncoded) { request =>
+    val db = SlickDatabase.get
+    new AuthService(db).withAuth(request.headers) { account =>
+      val query = videos.filter(_.id === videoid)
+      db.run(query.map(_.author).result).flatMap(_.head match {
+        case author if author == account.userName => db.run(query.delete).map(_ => Ok("deleted"))
+        case _ => Future(Unauthorized(s"${account.userName} is unauthorized to delete this video"))
+      })
     }
   }
 }
