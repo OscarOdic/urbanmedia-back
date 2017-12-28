@@ -48,4 +48,22 @@ class PlaceController @Inject() extends Controller {
       db.run(insert).map(_ => Ok("added"))
     }
   }
+
+  def followPlace = Action.async(parse.urlFormEncoded) { request =>
+    val db = SlickDatabase.get
+    new AuthService(db).withAuth(request.headers) { account =>
+      val insert = DBIO.seq(
+        follow += (account.userName, request.body("placeid").head.toInt)
+      )
+      db.run(insert).map(_ => Ok("followed"))
+    }
+  }
+
+  def unfollowPlace = Action.async(parse.urlFormEncoded) { request =>
+    val db = SlickDatabase.get
+    new AuthService(db).withAuth(request.headers) { account =>
+      db.run(follow.filter(f => f.userName === account.userName && f.placeId === request.body("placeid").head.toInt).delete)
+        .map(_ => Ok("unfollowed"))
+    }
+  }
 }
