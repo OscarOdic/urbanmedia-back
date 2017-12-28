@@ -7,8 +7,9 @@ import play.api.mvc._
 import play.api.libs.json.Json
 import utils.SlickDatabase
 import models.Tables._
-import services.{AuthService, PlaceService, UploadService}
+import services.{AuthService, MediaService, PlaceService, UploadService}
 import slick.jdbc.PostgresProfile.api._
+import utils.JsonFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -16,7 +17,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class PlaceController @Inject() extends Controller {
 
   def index(placeid: Int) = Action.async {
-    import utils.JsonFormatters._
     val db = SlickDatabase.get
     PlaceService.getPlace(placeid)(db).map {
       case Some(p) => Ok(Json.toJson(p))
@@ -57,6 +57,11 @@ class PlaceController @Inject() extends Controller {
     })
   }
 
+  def getImages(placeid: Int) = Action.async {
+    val db = SlickDatabase.get
+    MediaService.getImagesFromPlace(placeid)(db).map(l => Ok(Json.toJson(l)))
+  }
+
   def getSong(placeid: Int, songid: Int) = Action.async {
     val db = SlickDatabase.get
     db.run(songs.filter(i => i.placeId === placeid && i.id === songid).map(_.media).result.transactionally).map(_.headOption match {
@@ -65,12 +70,22 @@ class PlaceController @Inject() extends Controller {
     })
   }
 
+  def getSongs(placeid: Int) = Action.async {
+    val db = SlickDatabase.get
+    MediaService.getSongsFromPlace(placeid)(db).map(l => Ok(Json.toJson(l)))
+  }
+
   def getVideo(placeid: Int, videoid: Int) = Action.async {
     val db = SlickDatabase.get
     db.run(videos.filter(i => i.placeId === placeid && i.id === videoid).map(_.media).result.transactionally).map(_.headOption match {
       case Some(video) => Ok(video).as("video/mp4")
       case None => NotFound(s"Place with id $placeid or video with id $videoid not found")
     })
+  }
+
+  def getVideos(placeid: Int) = Action.async {
+    val db = SlickDatabase.get
+    MediaService.getVideosFromPlace(placeid)(db).map(l => Ok(Json.toJson(l)))
   }
 
   def uploadImage(placeid: Int) = Action.async(parse.temporaryFile) { request =>

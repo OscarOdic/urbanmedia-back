@@ -1,5 +1,6 @@
 package services
 
+import com.typesafe.config.ConfigFactory
 import slick.jdbc.PostgresProfile.backend.DatabaseDef
 import slick.jdbc.PostgresProfile.api._
 import models.DetailsPlace
@@ -21,7 +22,7 @@ object PlaceService {
         place.whoAdded,
         commentsPlace.map(_.copy(None, None)).toList,
         warningsPlace.map(_.copy(None, None)).toList,
-        if (image) Some(s"place/random?id=$id") else None
+        if (image) Some(s"${ConfigFactory.load().getString("application.baseUrl")}place/random?placeid=$id") else None
       ))
       case None => Future(None)
     })

@@ -11,8 +11,11 @@ GET     /place                      controllers.PlaceController.index(placeid: I
 GET     /place/random               controllers.PlaceController.randomBackgroundImage(placeid: Int)
 POST    /place/add                  controllers.PlaceController.add
 GET     /place/image                controllers.PlaceController.getImage(placeid: Int, imageid: Int)
+GET     /place/images               controllers.PlaceController.getImages(placeid: Int)
 GET     /place/song                 controllers.PlaceController.getSong(placeid: Int, songid: Int)
+GET     /place/songs                controllers.PlaceController.getSongs(placeid: Int)
 GET     /place/video                controllers.PlaceController.getVideo(placeid: Int, videoid: Int)
+GET     /place/videos               controllers.PlaceController.getVideos(placeid: Int)
 POST    /place/image/upload         controllers.PlaceController.uploadImage(placeid: Int)
 POST    /place/song/upload          controllers.PlaceController.uploadSong(placeid: Int)
 POST    /place/video/upload         controllers.PlaceController.uploadVideo(placeid: Int)

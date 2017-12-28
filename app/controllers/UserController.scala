@@ -10,6 +10,7 @@ import utils.SlickDatabase
 import models.Tables.accounts
 import org.mindrot.jbcrypt.BCrypt
 import slick.jdbc.PostgresProfile.api._
+import utils.JsonFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -17,7 +18,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class UserController @Inject() extends Controller {
 
   def index(username: String) = Action.async {
-    import utils.JsonFormatters._
     val db = SlickDatabase.get
     UserService.getUser(username)(db).map {
       case Some(u) => Ok(Json.toJson(u))

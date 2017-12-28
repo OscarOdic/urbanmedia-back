@@ -9,4 +9,5 @@ object JsonFormatters {
   implicit val detailsPlaceFormat: Format[DetailsPlace] = Json.format[DetailsPlace]
   implicit val accountFormat: Format[Account] = Json.format[Account]
   implicit val userFormat: Format[User] = Json.format[User]
+  implicit val mediaFormat: Format[Media] = Json.format[Media]
 }
