@@ -15,10 +15,13 @@ GET     /place/random               controllers.PlaceController.randomBackground
 POST    /place/add                  controllers.PlaceController.add
 
 GET     /place/image                controllers.MediaController.getImage(placeid: Int, imageid: Int)
+DELETE  /place/image                controllers.MediaController.deleteImage(imageid: Int)
 GET     /place/images               controllers.MediaController.getImages(placeid: Int)
 GET     /place/song                 controllers.MediaController.getSong(placeid: Int, songid: Int)
+DELETE  /place/song                 controllers.MediaController.deleteSong(songid: Int)
 GET     /place/songs                controllers.MediaController.getSongs(placeid: Int)
 GET     /place/video                controllers.MediaController.getVideo(placeid: Int, videoid: Int)
+DELETE  /place/video                controllers.MediaController.deleteVideo(videoid: Int)
 GET     /place/videos               controllers.MediaController.getVideos(placeid: Int)
 POST    /place/image/upload         controllers.MediaController.uploadImage(placeid: Int)
 POST    /place/song/upload          controllers.MediaController.uploadSong(placeid: Int)
