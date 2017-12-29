@@ -2,34 +2,35 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                           controllers.HomeController.index
+GET     /                                       controllers.HomeController.index
 
-GET     /user                       controllers.UserController.index(username: String)
-POST    /user/new                   controllers.UserController.create
-POST    /user/login                 controllers.UserController.check
+GET     /user/:username                         controllers.UserController.index(username: String)
+POST    /user/new                               controllers.UserController.create
+POST    /user/login                             controllers.UserController.check
 
-GET     /geoloc                     controllers.GeoLocController.index(northeast: String, southwest: String)
+GET     /geoloc                                 controllers.GeoLocController.index(northeast: String, southwest: String)
 
-GET     /place                      controllers.PlaceController.index(placeid: Int)
-GET     /place/random               controllers.PlaceController.randomBackgroundImage(placeid: Int)
-POST    /place/add                  controllers.PlaceController.add
-POST    /place/follow               controllers.PlaceController.followPlace
-POST    /place/unfollow             controllers.PlaceController.unfollowPlace
+GET     /place/:placeid                         controllers.PlaceController.index(placeid: Int)
+GET     /place/:placeid/random.png              controllers.PlaceController.randomBackgroundImage(placeid: Int)
+POST    /place/add                              controllers.PlaceController.add
+POST    /place/:placeid/follow                  controllers.PlaceController.followPlace(placeid: Int)
+POST    /place/:placeid/unfollow                controllers.PlaceController.unfollowPlace(placeid: Int)
 
-GET     /place/image                controllers.MediaController.getImage(placeid: Int, imageid: Int)
-DELETE  /place/image                controllers.MediaController.deleteImage(imageid: Int)
-GET     /place/images               controllers.MediaController.getImages(placeid: Int)
-GET     /place/song                 controllers.MediaController.getSong(placeid: Int, songid: Int)
-DELETE  /place/song                 controllers.MediaController.deleteSong(songid: Int)
-GET     /place/songs                controllers.MediaController.getSongs(placeid: Int)
-GET     /place/video                controllers.MediaController.getVideo(placeid: Int, videoid: Int)
-DELETE  /place/video                controllers.MediaController.deleteVideo(videoid: Int)
-GET     /place/videos               controllers.MediaController.getVideos(placeid: Int)
-POST    /place/image/upload         controllers.MediaController.uploadImage(placeid: Int)
-POST    /place/song/upload          controllers.MediaController.uploadSong(placeid: Int)
-POST    /place/video/upload         controllers.MediaController.uploadVideo(placeid: Int)
+GET     /image/image$imageid<[0-9]+>.png        controllers.MediaController.getImage(imageid: Int)
+DELETE  /image/:imageid                         controllers.MediaController.deleteImage(imageid: Int)
+GET     /place/:placeid/images                  controllers.MediaController.getImages(placeid: Int)
+GET     /song/song$songid<[0-9]+>.mp3           controllers.MediaController.getSong(songid: Int)
+DELETE  /song/:songid                           controllers.MediaController.deleteSong(songid: Int)
+GET     /place/:placeid/songs                   controllers.MediaController.getSongs(placeid: Int)
+GET     /video/video$videoid<[0-9]+>.mp4        controllers.MediaController.getVideo(videoid: Int)
+DELETE  /video/:videoid                         controllers.MediaController.deleteVideo(videoid: Int)
+GET     /place/:placeid/videos                  controllers.MediaController.getVideos(placeid: Int)
+POST    /place/:placeid/image/upload            controllers.MediaController.uploadImage(placeid: Int)
+POST    /place/:placeid/song/upload             controllers.MediaController.uploadSong(placeid: Int)
+POST    /place/:placeid/video/upload            controllers.MediaController.uploadVideo(placeid: Int)
 
-POST    /place/comment/add          controllers.ReactionController.addComment
-DELETE  /place/comment              controllers.ReactionController.deleteComment(commentid: Int)
-POST    /place/warning/add          controllers.ReactionController.addWarning
-DELETE  /place/warning              controllers.ReactionController.deleteWarning(warningid: Int)
+POST    /place/:placeid/comment/add             controllers.ReactionController.addComment(placeid: Int)
+POST    /comment/:commentid/edit                controllers.ReactionController.editComment(commentid:Int)
+DELETE  /comment/:commentid                     controllers.ReactionController.deleteComment(commentid: Int)
+POST    /place/:placeid/warning/add             controllers.ReactionController.addWarning(placeid: Int)
+DELETE  /warning/:warningid                     controllers.ReactionController.deleteWarning(warningid: Int)
