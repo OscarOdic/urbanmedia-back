@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject._
 
+import io.swagger.annotations.{Api, ApiImplicitParam, ApiImplicitParams}
 import play.api.mvc._
 import play.api.libs.json.Json
 import utils.SlickDatabase
@@ -13,6 +14,7 @@ import utils.JsonFormatters._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+@Api("Media")
 @Singleton
 class MediaController @Inject() extends Controller {
   def getImage(placeid: Int, imageid: Int) = Action.async {
@@ -78,7 +80,7 @@ class MediaController @Inject() extends Controller {
     }
   }
 
-  def deleteImage(imageid: Int) = Action.async(parse.urlFormEncoded) { request =>
+  def deleteImage(imageid: Int) = Action.async { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
       val query = images.filter(_.id === imageid)
@@ -89,7 +91,7 @@ class MediaController @Inject() extends Controller {
     }
   }
 
-  def deleteSong(songid: Int) = Action.async(parse.urlFormEncoded) { request =>
+  def deleteSong(songid: Int) = Action.async { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
       val query = songs.filter(_.id === songid)
@@ -100,7 +102,7 @@ class MediaController @Inject() extends Controller {
     }
   }
 
-  def deleteVideo(videoid: Int) = Action.async(parse.urlFormEncoded) { request =>
+  def deleteVideo(videoid: Int) = Action.async { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
       val query = videos.filter(_.id === videoid)

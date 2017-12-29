@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject._
 
+import io.swagger.annotations.Api
 import models.Reaction
 import models.Tables.{comments, warnings}
 import play.api.mvc.{Action, Controller}
@@ -12,6 +13,7 @@ import utils.SlickDatabase
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
+@Api("Reaction")
 @Singleton
 class ReactionController @Inject() extends Controller {
   def addComment = Action.async(parse.urlFormEncoded) { request =>

@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject._
 
+import io.swagger.annotations._
 import models.GeoLocPlace
 import play.api.mvc._
 import play.api.libs.json.Json
@@ -13,6 +14,7 @@ import utils.JsonFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
+@Api("Place")
 @Singleton
 class PlaceController @Inject() extends Controller {
 
@@ -33,6 +35,15 @@ class PlaceController @Inject() extends Controller {
     })
   }
 
+  @ApiOperation(
+    value = "Ajoute un nouveau lieu dans l'application",
+    authorizations = Array(new Authorization(value="basic"))
+  )
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "name", value = "Nom du lieu à ajouter", required = true, dataType = "String", paramType = "query"),
+    new ApiImplicitParam(name = "latitude", value = "Valeur de la latitude", required = true, dataType = "Double", paramType = "query"),
+    new ApiImplicitParam(name = "longitude", value = "Valeur de la longitude", required = true, dataType = "Double", paramType = "query")
+  ))
   def add = Action.async(parse.urlFormEncoded) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>

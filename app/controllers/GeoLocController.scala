@@ -2,6 +2,7 @@ package controllers
 
 import javax.inject._
 
+import io.swagger.annotations.Api
 import play.api.mvc._
 import play.api.libs.json.Json
 import services.GeoLocalisationService._
@@ -10,6 +11,7 @@ import utils.JsonFormatters._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
+@Api("GeoLocalisation")
 @Singleton
 class GeoLocController @Inject() extends Controller {
 
