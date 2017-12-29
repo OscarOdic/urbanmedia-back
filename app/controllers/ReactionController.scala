@@ -14,12 +14,12 @@ import scala.concurrent.Future
 
 @Singleton
 class ReactionController @Inject() extends Controller {
-  def addComment = Action.async(parse.urlFormEncoded) { request =>
+  def addComment(placeid: Int) = Action.async(parse.urlFormEncoded) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
       val insert = DBIO.seq(
         comments += Reaction(
-          placeId = Some(request.body("placeid").head.toInt),
+          placeId = Some(placeid),
           user = account.userName,
           message = request.body("message").head
         )
@@ -28,7 +28,19 @@ class ReactionController @Inject() extends Controller {
     }
   }
 
-  def deleteComment(commentid: Int) = Action.async(parse.urlFormEncoded) { request =>
+  def editComment(commentid: Int) = Action.async(parse.urlFormEncoded) { request =>
+    val db = SlickDatabase.get
+    new AuthService(db).withAuth(request.headers) { account =>
+      val query = comments.filter(_.id === commentid)
+      db.run(query.result).flatMap(_.head match {
+        case comment if comment.user == account.userName =>
+          db.run(query.update(comment.copy(message = request.body("message").head))).map(_ => Ok("edited"))
+        case _ => Future(Unauthorized(s"${account.userName} is unauthorized to edit this comment"))
+      })
+    }
+  }
+
+  def deleteComment(commentid: Int) = Action.async { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
       val query = comments.filter(_.id === commentid)
@@ -39,12 +51,12 @@ class ReactionController @Inject() extends Controller {
     }
   }
 
-  def addWarning = Action.async(parse.urlFormEncoded) { request =>
+  def addWarning(placeid: Int) = Action.async(parse.urlFormEncoded) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
       val insert = DBIO.seq(
         warnings += Reaction(
-          placeId = Some(request.body("placeid").head.toInt),
+          placeId = Some(placeid),
           user = account.userName,
           message = request.body("message").head
         )
@@ -53,7 +65,7 @@ class ReactionController @Inject() extends Controller {
     }
   }
 
-  def deleteWarning(warningid: Int) = Action.async(parse.urlFormEncoded) { request =>
+  def deleteWarning(warningid: Int) = Action.async { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
       val query = warnings.filter(_.id === warningid)

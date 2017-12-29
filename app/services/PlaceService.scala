@@ -13,8 +13,8 @@ object PlaceService {
   def getPlace(id: Int)(db: DatabaseDef): Future[Option[DetailsPlace]] = {
     db.run(geoLocPlaces.filter(_.id === id).result).flatMap(_.headOption match {
       case Some(place) => for {
-        commentsPlace <- db.run(comments.filter(_.placeId === place.id).result)
-        warningsPlace <- db.run(warnings.filter(_.placeId === place.id).result)
+        commentsPlace <- db.run(comments.filter(_.placeId === place.id).sortBy(_.id).result)
+        warningsPlace <- db.run(warnings.filter(_.placeId === place.id).sortBy(_.id).result)
         image <- db.run(images.filter(_.placeId === place.id).exists.result)
       } yield Some(DetailsPlace(
         place.id,
@@ -22,7 +22,7 @@ object PlaceService {
         place.whoAdded,
         commentsPlace.map(_.copy(placeId = None)).toList,
         warningsPlace.map(_.copy(placeId = None)).toList,
-        if (image) Some(s"${ConfigFactory.load().getString("application.baseUrl")}place/random?placeid=$id") else None
+        if (image) Some(s"${ConfigFactory.load().getString("application.baseUrl")}place/$id/random.png") else None
       ))
       case None => Future(None)
     })

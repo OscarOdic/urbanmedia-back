@@ -15,11 +15,11 @@ import scala.concurrent.Future
 
 @Singleton
 class MediaController @Inject() extends Controller {
-  def getImage(placeid: Int, imageid: Int) = Action.async {
+  def getImage(imageid: Int) = Action.async {
     val db = SlickDatabase.get
-    db.run(images.filter(i => i.placeId === placeid && i.id === imageid).map(_.media).result.transactionally).map(_.headOption match {
-      case Some(image) => Ok(image).as("image")
-      case None => NotFound(s"Place with id $placeid or image with id $imageid not found")
+    db.run(images.filter(_.id === imageid).map(_.media).result.transactionally).map(_.headOption match {
+      case Some(image) => Ok(image).as("image/png")
+      case None => NotFound(s"Image with id $imageid not found")
     })
   }
 
@@ -28,11 +28,11 @@ class MediaController @Inject() extends Controller {
     MediaService.getImagesFromPlace(placeid)(db).map(l => Ok(Json.toJson(l)))
   }
 
-  def getSong(placeid: Int, songid: Int) = Action.async {
+  def getSong(songid: Int) = Action.async {
     val db = SlickDatabase.get
-    db.run(songs.filter(i => i.placeId === placeid && i.id === songid).map(_.media).result.transactionally).map(_.headOption match {
-      case Some(song) => Ok(song).as("audio")
-      case None => NotFound(s"Place with id $placeid or song with id $songid not found")
+    db.run(songs.filter(_.id === songid).map(_.media).result.transactionally).map(_.headOption match {
+      case Some(song) => Ok(song).as("audio/mp3")
+      case None => NotFound(s"Song with id $songid not found")
     })
   }
 
@@ -41,11 +41,11 @@ class MediaController @Inject() extends Controller {
     MediaService.getSongsFromPlace(placeid)(db).map(l => Ok(Json.toJson(l)))
   }
 
-  def getVideo(placeid: Int, videoid: Int) = Action.async {
+  def getVideo(videoid: Int) = Action.async {
     val db = SlickDatabase.get
-    db.run(videos.filter(i => i.placeId === placeid && i.id === videoid).map(_.media).result.transactionally).map(_.headOption match {
+    db.run(videos.filter(_.id === videoid).map(_.media).result.transactionally).map(_.headOption match {
       case Some(video) => Ok(video).as("video/mp4")
-      case None => NotFound(s"Place with id $placeid or video with id $videoid not found")
+      case None => NotFound(s"Video with id $videoid not found")
     })
   }
 
@@ -54,26 +54,26 @@ class MediaController @Inject() extends Controller {
     MediaService.getVideosFromPlace(placeid)(db).map(l => Ok(Json.toJson(l)))
   }
 
-  def uploadImage(placeid: Int) = Action.async(parse.temporaryFile) { request =>
+  def uploadImage(placeid: Int) = Action.async(parse.multipartFormData) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
-      val insert = UploadService.uploadFile(images, placeid, request.body, account.userName)(db)
+      val insert = UploadService.uploadFile(images, placeid, request.body.file("image").get.ref, account.userName)(db)
       db.run(insert).map(_ => Ok("added"))
     }
   }
 
-  def uploadSong(placeid: Int) = Action.async(parse.temporaryFile) { request =>
+  def uploadSong(placeid: Int) = Action.async(parse.multipartFormData) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
-      val insert = UploadService.uploadFile(songs, placeid, request.body, account.userName)(db)
+      val insert = UploadService.uploadFile(songs, placeid, request.body.file("song").get.ref, account.userName)(db)
       db.run(insert).map(_ => Ok("added"))
     }
   }
 
-  def uploadVideo(placeid: Int) = Action.async(parse.temporaryFile) { request =>
+  def uploadVideo(placeid: Int) = Action.async(parse.multipartFormData) { request =>
     val db = SlickDatabase.get
     new AuthService(db).withAuth(request.headers) { account =>
-      val insert = UploadService.uploadFile(videos, placeid, request.body, account.userName)(db)
+      val insert = UploadService.uploadFile(videos, placeid, request.body.file("video").get.ref, account.userName)(db)
       db.run(insert).map(_ => Ok("added"))
     }
   }

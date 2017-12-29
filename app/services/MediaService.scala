@@ -10,18 +10,18 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object MediaService {
-  def getMediasFromPlace[T <: Medias](table: TableQuery[T], tableName: String)(placeId: Int)(db: DatabaseDef): Future[List[Media]] =
-    db.run(table.filter(_.placeId === placeId).map(media => (media.author, media.id)).result).map(_.toList.map {
+  def getMediasFromPlace[T <: Medias](table: TableQuery[T], tableName: String, fileType: String)(placeId: Int)(db: DatabaseDef): Future[List[Media]] =
+    db.run(table.filter(_.placeId === placeId).sortBy(_.id).map(media => (media.author, media.id)).result).map(_.toList.map {
       case (author, mediaId) => Media(
         Some(mediaId),
         author,
-        s"${ConfigFactory.load().getString("application.baseUrl")}place/$tableName?placeid=$placeId&${tableName}id=$mediaId"
+        s"${ConfigFactory.load().getString("application.baseUrl")}$tableName/$tableName$mediaId.$fileType"
       )
     })
 
-  def getImagesFromPlace = getMediasFromPlace(images, "image") _
+  def getImagesFromPlace = getMediasFromPlace(images, "image", "png") _
 
-  def getSongsFromPlace = getMediasFromPlace(songs, "song") _
+  def getSongsFromPlace = getMediasFromPlace(songs, "song", "mp3") _
 
-  def getVideosFromPlace = getMediasFromPlace(videos, "video") _
+  def getVideosFromPlace = getMediasFromPlace(videos, "video", "mp4") _
 }
