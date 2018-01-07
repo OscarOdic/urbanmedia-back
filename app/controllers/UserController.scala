@@ -31,7 +31,7 @@ class UserController @Inject() extends Controller {
       accounts += Account(
         request.body("username").head,
         BCrypt.hashpw(request.body("password").head, BCrypt.gensalt()),
-        request.body.get("bio").map(_.head)
+        request.body.get("bio").map(_.head).orElse(Some(""))
       )
     )
     db.run(insert).map(_ => Ok("added"))
